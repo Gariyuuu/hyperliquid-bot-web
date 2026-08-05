@@ -9,6 +9,18 @@ export function ema(values: number[], period: number): number {
   return out;
 }
 
+// Same seeding/recurrence as ema(), but returns the running value at every
+// index instead of just the final one — used to draw the EMA lines on the chart.
+export function emaSeries(values: number[], period: number): number[] {
+  if (values.length === 0) return [];
+  const k = 2 / (period + 1);
+  const out: number[] = [values[0]];
+  for (let i = 1; i < values.length; i++) {
+    out.push(values[i] * k + out[i - 1] * (1 - k));
+  }
+  return out;
+}
+
 export type Signal = -1 | 0 | 1;
 
 export function signal(

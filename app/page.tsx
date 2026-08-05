@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { initPaperState, reconcile, PaperState } from "@/lib/paper";
 import type { Signal } from "@/lib/strategy";
+import PriceChart from "./PriceChart";
 
 interface Config {
   symbol: string;
@@ -49,6 +50,13 @@ function fmtUsd(n: number): string {
   return `${sign}$${Math.abs(n).toFixed(2)}`;
 }
 
+function lineClass(l: LogLine): string {
+  if (l.isErr) return "err";
+  if (l.text.includes("BUY")) return "buy-line";
+  if (l.text.includes("SELL") || l.text.includes("CLOSE")) return "sell-line";
+  return "";
+}
+
 export default function Page() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
   const [paper, setPaper] = useState<PaperState>(initPaperState());
@@ -57,6 +65,7 @@ export default function Page() {
   const [mid, setMid] = useState<number | null>(null);
   const [gap, setGap] = useState<number | null>(null);
   const [target, setTarget] = useState<Signal>(0);
+  const [closes, setCloses] = useState<number[]>([]);
   const logRef = useRef<HTMLDivElement>(null);
   const tickRef = useRef(false);
 
@@ -106,6 +115,7 @@ export default function Page() {
       setMid(data.mid);
       setGap(data.gap);
       setTarget(data.target);
+      setCloses(data.closes ?? []);
 
       setPaper((prevPaper) => {
         if (prevPaper.halted) return prevPaper;
@@ -161,49 +171,69 @@ export default function Page() {
   const pnl = paper.cash + paper.size * (mid ?? 0) - paper.startEquity;
   const equity = paper.cash + paper.size * (mid ?? 0);
   const posUsd = paper.size * (mid ?? 0);
+  const posFrac = Math.min(Math.abs(posUsd) / Math.max(config.maxPositionUsd, 1), 1);
 
   return (
     <div className="wrap">
+      <div className="top">
+        <div className="brand">
+          <span className="dot-live" />
+          <h1>Hyperliquid EMA Bot</h1>
+        </div>
+        <span className={`pill ${running ? "running" : "stopped"}`}>{running ? "LIVE — PAPER" : "STOPPED"}</span>
+      </div>
+      <div className="sub">
+        EMA({config.fastEma}/{config.slowEma}) crossover on {config.symbol} · neutral band{" "}
+        {(config.neutralBand * 100).toFixed(3)}% · poll every {config.pollSeconds}s
+      </div>
+
       <div className="banner">
         <strong>Paper trading simulation — no real funds, no exchange keys.</strong>{" "}
-        This dashboard reads live public Hyperliquid market data and runs the exact same
-        EMA-crossover signal, position-sizing, and kill-switch logic as the original{" "}
-        <code>hyperliquid-bot</code> Python bot, against a simulated $1,000 paper account
-        stored only in your browser. It never places real orders.
+        Reads live public Hyperliquid market data and runs the exact same EMA-crossover signal,
+        position-sizing, and kill-switch logic as the original <code>hyperliquid-bot</code> Python bot,
+        against a simulated $1,000 paper account stored only in your browser.
       </div>
 
-      <h1>Hyperliquid EMA Bot — Paper Dashboard</h1>
-      <div className="sub">
-        EMA({config.fastEma}/{config.slowEma}) crossover · neutral band {(config.neutralBand * 100).toFixed(3)}% ·
-        {" "}poll every {config.pollSeconds}s
+      <div className="hero">
+        <div className="hero-price">
+          <div className="label">{config.symbol} / USD</div>
+          <div className="price">{mid !== null ? `$${mid.toFixed(2)}` : "—"}</div>
+          <div className="meta">
+            <span>Gap <b className={gap !== null && gap > 0 ? "pos" : gap !== null && gap < 0 ? "neg" : ""}>{gap !== null ? `${(gap * 100).toFixed(3)}%` : "—"}</b></span>
+            <span>Signal <span className={`pill ${dirClass}`}>{dirLabel}</span></span>
+          </div>
+        </div>
+        <div className="grid">
+          <div className="card">
+            <div className="label">Position</div>
+            <div className="value">{fmtUsd(posUsd)}</div>
+            <div className="meter">
+              <div className="zero" />
+              <div
+                className={`fill ${posUsd >= 0 ? "long" : "short"}`}
+                style={{
+                  width: `${(posFrac * 50).toFixed(1)}%`,
+                  left: posUsd >= 0 ? "50%" : `${50 - posFrac * 50}%`,
+                }}
+              />
+            </div>
+          </div>
+          <div className="card">
+            <div className="label">Equity</div>
+            <div className="value">{fmtUsd(equity)}</div>
+          </div>
+          <div className="card">
+            <div className="label">Session PnL</div>
+            <div className={`value ${pnl >= 0 ? "pos" : "neg"}`}>{fmtUsd(pnl)}</div>
+          </div>
+          <div className="card">
+            <div className="label">Trades</div>
+            <div className="value">{paper.trades}</div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid">
-        <div className="card">
-          <div className="label">{config.symbol} price</div>
-          <div className="value">{mid !== null ? `$${mid.toFixed(2)}` : "—"}</div>
-        </div>
-        <div className="card">
-          <div className="label">Signal</div>
-          <div className="value"><span className={`pill ${dirClass}`}>{dirLabel}</span></div>
-        </div>
-        <div className="card">
-          <div className="label">Gap</div>
-          <div className="value">{gap !== null ? `${(gap * 100).toFixed(3)}%` : "—"}</div>
-        </div>
-        <div className="card">
-          <div className="label">Position</div>
-          <div className="value">{fmtUsd(posUsd)}</div>
-        </div>
-        <div className="card">
-          <div className="label">Equity</div>
-          <div className="value">{fmtUsd(equity)}</div>
-        </div>
-        <div className="card">
-          <div className="label">Session PnL</div>
-          <div className={`value ${pnl >= 0 ? "pos" : "neg"}`}>{fmtUsd(pnl)}</div>
-        </div>
-      </div>
+      <PriceChart closes={closes} fast={config.fastEma} slow={config.slowEma} />
 
       <div className="panel">
         <h2>Config</h2>
@@ -277,9 +307,8 @@ export default function Page() {
         <div className="row">
           <button className="preset" disabled={running} onClick={() => applyPreset("normal")}>Normal mode</button>
           <button className="preset" disabled={running} onClick={() => applyPreset("fast")}>Fast mode</button>
-          <button className="preset" disabled={running} onClick={() => applyPreset("crazy")}>Crazy mode 🔥</button>
+          <button className="preset crazy" disabled={running} onClick={() => applyPreset("crazy")}>Crazy mode 🔥</button>
           <span style={{ flex: 1 }} />
-          <span className={`pill ${running ? "running" : "stopped"}`}>{running ? "RUNNING" : "STOPPED"}</span>
           {paper.halted && <span className="pill halted">HALTED — {paper.haltReason}</span>}
           <button className={running ? "stop" : "primary"} disabled={paper.halted} onClick={toggleRun}>
             {running ? "Stop" : "Start"}
@@ -293,7 +322,7 @@ export default function Page() {
         <div className="log" ref={logRef}>
           {logLines.length === 0 && <div className="line">Press Start to begin polling live market data…</div>}
           {logLines.map((l, i) => (
-            <div key={i} className={`line ${l.isErr ? "err" : ""}`}>
+            <div key={i} className={`line ${lineClass(l)}`}>
               [{new Date(l.ts).toLocaleTimeString()}] {l.text}
             </div>
           ))}
