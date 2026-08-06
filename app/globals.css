@@ -255,7 +255,7 @@ h1 {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 100% 0%, rgba(57,135,229,0.14), transparent 55%);
+  background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 55%);
   pointer-events: none;
 }
 
@@ -363,8 +363,8 @@ h1 {
 
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .dot.price { background: var(--text-secondary); }
-.dot.fast { background: var(--blue); box-shadow: 0 0 6px rgba(57,135,229,0.7); }
-.dot.slow { background: var(--orange); box-shadow: 0 0 6px rgba(217,89,38,0.7); }
+.dot.fast { background: var(--blue); box-shadow: 0 0 6px color-mix(in srgb, var(--blue) 70%, transparent); }
+.dot.slow { background: var(--orange); box-shadow: 0 0 6px color-mix(in srgb, var(--orange) 70%, transparent); }
 
 .chart-svg { display: block; width: 100%; cursor: crosshair; }
 .chart-grid { stroke: var(--surface-2); stroke-width: 1; }
@@ -379,7 +379,7 @@ h1 {
   position: absolute;
   top: 6px;
   transform: translateX(-50%);
-  background: rgba(10,12,16,0.95);
+  background: var(--surface-solid);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 6px 9px;
@@ -389,9 +389,10 @@ h1 {
   gap: 10px;
   pointer-events: none;
   white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
-.chart-tooltip div { display: flex; align-items: center; gap: 5px; color: var(--text-secondary); }
+.chart-tooltip div { display: flex; align-items: center; gap: 5px; color: var(--text); }
 
 /* ---- panels & controls ---- */
 
@@ -468,11 +469,11 @@ button:hover:not(:disabled) { border-color: var(--border-strong); background: va
 button:active:not(:disabled) { transform: scale(0.98); }
 
 button.primary {
-  background: linear-gradient(180deg, #4a9bf0, var(--blue));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--blue) 80%, white), var(--blue));
   border-color: transparent;
   color: #06121f;
   font-weight: 650;
-  box-shadow: 0 4px 16px rgba(57,135,229,0.35);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--blue) 35%, transparent);
 }
 
 button.stop {
