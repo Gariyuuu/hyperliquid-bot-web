@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { initPaperState, reconcile, PaperState } from "@/lib/paper";
 import type { Signal } from "@/lib/strategy";
 import PriceChart from "./PriceChart";
+import ThemeSlider from "./ThemeSlider";
 
 interface Config {
   symbol: string;
@@ -180,7 +182,11 @@ export default function Page() {
           <span className="dot-live" />
           <h1>Hyperliquid EMA Bot</h1>
         </div>
-        <span className={`pill ${running ? "running" : "stopped"}`}>{running ? "LIVE — PAPER" : "STOPPED"}</span>
+        <div className="header-actions">
+          <span className={`pill ${running ? "running" : "stopped"}`}>{running ? "LIVE — PAPER" : "STOPPED"}</span>
+          <Link href="/changelog" className="nav-link">Patch notes</Link>
+          <ThemeSlider />
+        </div>
       </div>
       <div className="sub">
         EMA({config.fastEma}/{config.slowEma}) crossover on {config.symbol} · neutral band{" "}
