@@ -5,7 +5,7 @@ import Link from "next/link";
 import { initPaperState, reconcile, PaperState } from "@/lib/paper";
 import type { Signal } from "@/lib/strategy";
 import PriceChart from "./PriceChart";
-import ThemeSlider from "./ThemeSlider";
+import ThemeWheel from "./ThemeWheel";
 
 interface Config {
   symbol: string;
@@ -185,7 +185,7 @@ export default function Page() {
         <div className="header-actions">
           <span className={`pill ${running ? "running" : "stopped"}`}>{running ? "LIVE — PAPER" : "STOPPED"}</span>
           <Link href="/changelog" className="nav-link">Patch notes</Link>
-          <ThemeSlider />
+          <ThemeWheel />
         </div>
       </div>
       <div className="sub">
