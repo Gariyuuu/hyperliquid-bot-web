@@ -12,11 +12,11 @@ In this order: `CLAUDE.md` → `PROJECT_STATE.md` → `TASKS.md` → (if doing U
 
 ## What is the current task?
 
-**None (application-wise).** Task `C-003`, a third account-switch documentation checkpoint, is complete as of this writing (see `TASKS.md`). The repository is in a complete, deployed, verified state, unchanged since `C-001`. There is no in-progress feature work to resume. The only thing awaiting a decision is whether to `git commit` the 17 untracked documentation files — that decision belongs to the user, not to whichever account reads this next.
+**None (application-wise).** Task `C-004`, a fourth checkpoint ("final transfer checkpoint"), is complete as of this writing (see `TASKS.md`). The repository is in a complete, deployed, verified state; application code is unchanged since commit `7df08aa`. There is no in-progress feature work to resume. The 17-file documentation set is fully committed (at `70f4a80`, by the owner) and this checkpoint added the previously-missing `README.md` and fixed stale "docs uncommitted" language left over from earlier passes — there is no open commit decision left.
 
 ## What was the previous agent doing?
 
-Building the app from scratch (2026-08-05), then iterating on UI/UX per direct user feedback across several rounds: full visual redesign → real PNG backgrounds + a light/dark slider → user said light mode was ugly and backgrounds barely visible + wanted more theme choices + a real favicon → replaced the slider with a 4-swatch theme wheel (Terminal/Paper/Matrix/Midnight), regenerated all backgrounds stronger, added a real icon. Then found and fixed two cross-theme CSS bugs via actual Playwright screenshots. Then performed a full documentation/handoff audit (task `C-001`) creating this entire 17-file memory system — no application code changed in that pass. Then performed a second checkpoint pass (task `C-002`) re-verifying everything was still accurate and adding one previously-undocumented design decision (`DECISIONS.md` D-008). Then performed a third checkpoint pass (task `C-003`, this entry, run from a fresh session with no memory of the prior two) that independently re-derived the repo's state, found zero drift, and additionally did a direct code/dependency spot-check (grep for order/signing/wallet code, `package.json` dependency review, full read of `lib/paper.ts`) to re-confirm the paper-trading-only claim rather than just trusting the prior write-up. No application code changed in this pass either.
+Building the app from scratch (2026-08-05), then iterating on UI/UX per direct user feedback across several rounds: full visual redesign → real PNG backgrounds + a light/dark slider → user said light mode was ugly and backgrounds barely visible + wanted more theme choices + a real favicon → replaced the slider with a 4-swatch theme wheel (Terminal/Paper/Matrix/Midnight), regenerated all backgrounds stronger, added a real icon. Then found and fixed two cross-theme CSS bugs via actual Playwright screenshots. Then performed a full documentation/handoff audit (task `C-001`) creating a 16-file memory system (all but `README.md`). Then a second checkpoint pass (`C-002`) re-verifying everything and adding `DECISIONS.md` D-008. Then a third checkpoint pass (`C-003`) that independently re-derived the repo's state, found zero drift, and re-confirmed the paper-trading-only claim via direct code spot-check. At that point the owner committed all 17 files as `70f4a80`. Then this pass (`C-004`, "final transfer checkpoint") found the repo at 16/17 docs (README missing), added `README.md`, re-verified everything against real code/git state, ran `npm run build` clean, scanned for secrets (none found), and — the one substantive finding — caught that `CLAUDE.md`/`PROJECT_STATE.md`/`TASKS.md`/`HANDOFF.md` still described the doc set as uncommitted even though it had already been committed; corrected that contradiction in all four files. No application code changed in this pass either.
 
 ## What works right now?
 
@@ -28,7 +28,7 @@ Nothing known. Zero open bugs.
 
 ## What should I do next?
 
-Nothing is required. **Ask the user whether they want the 17 untracked documentation files committed** — that's the one open, non-technical question left over from the last three checkpoints (see `PROJECT_STATE.md` item 0). Otherwise, if given a new task, just do it following the rules in `CLAUDE.md`. If you want optional, non-blocking improvements to pick from, see `TASKS.md` → "Next up" (a test suite is the most valuable one — there currently is none).
+Nothing is required — there is no open decision left over from prior checkpoints. If given a new task, just do it following the rules in `CLAUDE.md`. If you want optional, non-blocking improvements to pick from, see `TASKS.md` → "Next up" (a test suite is the most valuable one — there currently is none; running `npm run lint` and deciding on an ESLint setup is the other).
 
 ## Which files are most important?
 
@@ -60,15 +60,25 @@ Run `npm run start -- -p 3411` (after `npm run build`) and check `http://localho
 
 ```
 Read CLAUDE.md, PROJECT_STATE.md, TASKS.md, and HANDOFF.md in this repository in full.
-Then run `git status` and `git log --oneline -10` and compare against what those files claim.
-Then run `npm run build` and confirm it is still clean.
+Then run `git status`, `git log --oneline -10`, and `git fetch origin` (read-only) and compare
+against what those files claim. Then run `npm run build` and confirm it is still clean.
+
+Current true state as of the last checkpoint (C-004, 2026-08-07): application code unchanged
+since commit 7df08aa; the 17-file documentation set (including README.md) is fully committed
+on main; working tree was clean at that checkpoint. This app is paper-trading-only — no real
+Hyperliquid orders, no private key, no exchange credentials anywhere in the codebase; verify
+that claim yourself against lib/hyperliquid.ts and package.json rather than just trusting this
+line, since it is the single most important safety fact about this repo.
+
 Summarize your understanding of this project's current state in a few sentences before making
 any change. If you find any contradiction between the docs and the actual repository state, or
 any documentation that looks stale, say so explicitly before proceeding — do not silently trust
-or silently discard it. Do not redo any already-completed work described in CHANGELOG.md or
-SESSION_LOG.md. Preserve the existing architecture (no database, no auth, client-side-only paper
-trading, CSS-variable-driven theming) unless there is a strong, explicitly stated reason to change
-it. After completing whatever task you're given, update PROJECT_STATE.md, TASKS.md, append to
-SESSION_LOG.md, and update any other documentation file your change affects, per the permanent
-rules in CLAUDE.md.
+or silently discard it (a real one was found and fixed during C-004: several docs claimed the
+17-file doc set was uncommitted after the owner had already committed it — check for this class
+of drift, since checkpoint passes are exactly where it creeps in). Do not redo any already-
+completed work described in CHANGELOG.md or SESSION_LOG.md. Preserve the existing architecture
+(no database, no auth, client-side-only paper trading, CSS-variable-driven theming) unless there
+is a strong, explicitly stated reason to change it. After completing whatever task you're given,
+update PROJECT_STATE.md, TASKS.md, append to SESSION_LOG.md, and update any other documentation
+file your change affects, per the permanent rules in CLAUDE.md.
 ```

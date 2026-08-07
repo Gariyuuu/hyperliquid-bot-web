@@ -6,27 +6,29 @@ Active execution queue. Keep this file in sync with `PROJECT_STATE.md` and `HAND
 
 ## Current task
 
-**C-003 — Account-switch checkpoint (third documentation pass). Status: Complete as of this writing.**
+**C-004 — Final transfer checkpoint (fourth documentation pass). Status: Complete as of this writing.**
 
-- **Exact objective:** Independently re-verify the repository's current state (from a fresh account/session with zero access to the C-001/C-002 conversations) and refresh the 17-file permanent memory/handoff system so a brand-new Claude Code account can resume work correctly. No feature work, no application-behavior changes.
+- **Exact objective:** Independently re-verify the repository's current state, add the one missing canonical doc (`README.md`, repo was at 16/17), re-verify `PROJECT_STATE.md`/`TASKS.md`/`FEATURES.md` against real code/git state, scan for secrets, resolve cross-file contradictions, and refresh `HANDOFF.md`'s resume prompt. No feature work, no application-behavior changes.
 - **What has already been completed:**
-  1. Inspected `git branch --show-current`, `git status`, `git log --oneline -20`, `git diff --stat` — confirmed still on `main`, still at commit `7df08aa`, working tree still has exactly the same 17 untracked doc files and zero uncommitted/modified tracked files. Zero drift since C-002.
-  2. Read `PROJECT_STATE.md`, `TASKS.md`, `HANDOFF.md`, `CLAUDE.md`, `SESSION_LOG.md`, `DECISIONS.md`, `SECURITY.md` in full and cross-checked their factual claims against the live repo (line counts, file existence, commit hash references, the `dangerouslySetInnerHTML` and `fetchUniverseSymbols` claims) — all confirmed accurate.
-  3. Did a direct code spot-check of the paper-trading-only claim (D-001), independent of trusting the prior passes' word: grepped `app/`+`lib/` for private-key/signer/order-placement/wallet-related identifiers (zero matches), confirmed `package.json` has only `next`/`react`/`react-dom` as runtime deps (no Hyperliquid SDK, no `ethers`/`viem`), read `lib/paper.ts` fully (pure fill-simulator arithmetic, no network I/O), confirmed `app/api/market/route.ts` only computes/returns a read-only signal.
-  4. Grepped every `.md` file in the repo for secret-shaped patterns (API keys, private key headers, bearer tokens, `0x`-prefixed long hex strings, password assignments) — zero matches. Also confirmed `.env.local`'s real Vercel OIDC token value is never referenced (only the variable *name* is documented) — correctly gitignored and outside any doc file.
-  5. Updated `PROJECT_STATE.md` (audit timestamp bumped to "third pass," "Last completed task" section rewritten with this pass's findings).
-  6. Updated this file (`TASKS.md`) with this full task breakdown.
-  7. Updating `HANDOFF.md` and appending to `SESSION_LOG.md` (same pass — see below).
-- **What remains:** Nothing for this task itself. Once `HANDOFF.md` and `SESSION_LOG.md` are updated (same pass), this task is fully complete and the repository reverts to having **no active task** (see "Next up" below for optional, non-required follow-ups).
-- **Relevant files:** `PROJECT_STATE.md`, `TASKS.md` (this file), `HANDOFF.md`, `SESSION_LOG.md`. `CLAUDE.md`/`DECISIONS.md`/other docs were read and spot-checked but not edited — no new architecture/workflow/decision emerged this pass. No application source files were touched.
+  1. Confirmed via `ls` the repo had 16/17 canonical docs — `README.md` was genuinely missing. Wrote `README.md` (what the app is, stack, local run instructions, live URL, and a paper-trading-only note independently verified against the code, not just copied from other docs).
+  2. Inspected `git status` (clean), `git log --oneline -5` (HEAD `70f4a80`, "docs: add full handoff documentation system"), `git fetch origin` (up to date, nothing new on remote), `git branch -vv`.
+  3. Re-ran the paper-trading-only spot-check independently: grepped `app/`+`lib/` for privateKey/signer/placeOrder/wallet/0x-hex identifiers (zero matches), confirmed `package.json` runtime deps are still only `next`/`react`/`react-dom`, confirmed `lib/hyperliquid.ts` only hits the public read-only `https://api.hyperliquid.xyz/info` endpoint.
+  4. Ran `npm run build` — clean, 0 errors.
+  5. Grepped every tracked file (not just `.md`) for secret-shaped patterns (api_key/secret/password/private_key/bearer/token assignments) — zero matches. Confirmed `.env.local` (untracked, gitignored) contains only a Vercel CLI OIDC JWT, not an application secret, and is not referenced by any doc or app code.
+  6. **Found a real cross-file contradiction:** `CLAUDE.md`, `PROJECT_STATE.md`, `TASKS.md`, and `HANDOFF.md` all still stated the 17-file doc set was untracked and awaiting the user's commit decision — but `git log` shows the owner (Gary Wang) already committed all 17 files at `70f4a80`, one commit after the `C-003` pass. Corrected this in all four files.
+  7. Refreshed the "Prompt for the next Claude Code account" section in `HANDOFF.md` to reflect current state (docs committed, README added, no open commit decision).
+  8. Updated `PROJECT_STATE.md` and this file with this pass's findings; appending to `SESSION_LOG.md`.
+- **What remains:** Nothing for this task itself.
+- **Relevant files:** `README.md` (new), `CLAUDE.md`, `PROJECT_STATE.md`, `TASKS.md` (this file), `HANDOFF.md`, `SESSION_LOG.md`. `FEATURES.md`/`ARCHITECTURE.md`/`DECISIONS.md`/`SECURITY.md`/`DEPLOYMENT.md` were read and spot-checked against the live code but found accurate — not edited. No application source files were touched.
 - **Known errors:** None encountered during this checkpoint.
 - **Blockers:** None.
 - **Acceptance criteria:**
-  - The "current task" statement reads consistently (in substance) across `CLAUDE.md`, `PROJECT_STATE.md`, `TASKS.md`, and `HANDOFF.md`.
-  - No real secret value appears in any documentation file (Verified via grep for known secret-shaped strings this pass — clean).
-  - `npm run build` was not re-run this pass since zero source files changed (last confirmed clean at commit `7df08aa` in C-001); re-run it yourself before trusting this claim if any time has passed.
-  - No application file was modified, committed, pushed, deployed, reset, or discarded as part of this checkpoint.
-- **Verification steps performed:** `git branch --show-current`, `git status`, `git log --oneline -20`, `git diff --stat`, `grep -rniE` for order/signing/wallet identifiers across `app/`+`lib/`, `cat package.json` dependency block, full read of `lib/paper.ts`, `grep -n` for `dangerouslySetInnerHTML`/`fetchUniverseSymbols` usage, `wc -l app/globals.css` + `grep -n "^:root\[data-theme"` to confirm the 4-theme claim, `grep -rniE` for secret-shaped patterns across every `.md` file, manual re-read of every file this checkpoint touched before finalizing.
+  - 17/17 canonical docs present (README.md added, was the only gap).
+  - The "current task"/"docs committed" statement reads consistently across `CLAUDE.md`, `PROJECT_STATE.md`, `TASKS.md`, and `HANDOFF.md`.
+  - No real secret value appears in any tracked file (Verified via grep — clean).
+  - `npm run build` re-run and confirmed clean this pass.
+  - No application file was modified as part of this checkpoint.
+- **Verification steps performed:** `ls` (doc inventory), `git status`, `git log --oneline -5`, `git fetch origin`, `git branch -vv`, `grep -rniE` for order/signing/wallet identifiers across `app/`+`lib/`, `cat package.json` dependency block, `npm run build`, `git grep -nIiE` for secret-shaped patterns across all tracked files, `curl` checks against the live URL (`/` and `/changelog`, both 200).
 
 ## Next up
 
@@ -87,6 +89,7 @@ _(None — this audit just created the full set. Keep it updated per `CLAUDE.md`
 
 ## Recently completed
 
+- **C-004 — Final transfer checkpoint, fourth pass** (2026-08-07, documentation-only): added the missing `README.md` (repo was at 16/17 canonical docs), re-verified paper-trading-only claim and secrets scan independently, ran `npm run build` clean, found and fixed a real contradiction (docs were described as uncommitted in `CLAUDE.md`/`PROJECT_STATE.md`/`TASKS.md`/`HANDOFF.md` after the owner had already committed them at `70f4a80`), refreshed `HANDOFF.md`'s resume prompt. See "Current task" above for the full breakdown.
 - **C-003 — Account-switch checkpoint, third pass** (2026-08-06, documentation-only, no commit): independently re-derived repo state from a fresh session, found zero drift since C-002, re-confirmed paper-trading-only via direct code/dependency spot-check, re-confirmed zero secrets in docs. See "Current task" above for the full breakdown.
 - **C-002 — Account-switch checkpoint, second pass** (2026-08-06, documentation-only, no commit): re-verified state, refreshed all 17 memory files, added `DECISIONS.md` D-008. See "Current task" above for the full breakdown.
 - **C-001 — Account-switch checkpoint, first pass / initial creation of the 17-file memory system** (2026-08-06, documentation-only, no commit): full repository audit, created `CLAUDE.md`/`PROJECT_STATE.md`/`ARCHITECTURE.md`/`FILE_MAP.md`/`FEATURES.md`/`TASKS.md`/`ROADMAP.md`/`DECISIONS.md`/`DATABASE.md`/`API_REFERENCE.md`/`UI_SYSTEM.md`/`SECURITY.md`/`TESTING.md`/`DEPLOYMENT.md`/`CHANGELOG.md`/`SESSION_LOG.md`/`HANDOFF.md` from scratch.

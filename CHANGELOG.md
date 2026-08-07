@@ -2,6 +2,15 @@
 
 This mirrors the in-app patch notes (`app/changelog/page.tsx`) plus records this documentation handoff. The in-app page is the user-facing version; this file is the repo-facing version — keep both in sync per `CLAUDE.md`'s permanent rules.
 
+## [Unreleased] — Final transfer checkpoint — 2026-08-07
+
+**No product behavior changed.** Documentation-only pass.
+
+- Added the previously-missing `README.md` (repo had 16/17 canonical docs).
+- Re-verified paper-trading-only claim, git state, and secret-scan independently; all clean.
+- Found and fixed a stale cross-file claim: `CLAUDE.md`/`PROJECT_STATE.md`/`TASKS.md`/`HANDOFF.md` still said the 17-file doc set was uncommitted and awaiting a decision, but it had already been committed (`70f4a80`). Corrected in all four files.
+- Refreshed `HANDOFF.md`'s "Prompt for the next Claude Code account" section.
+
 ## [Unreleased] — Documentation handoff — 2026-08-06
 
 **No product behavior was intentionally changed in this entry.** This was a documentation-only audit.

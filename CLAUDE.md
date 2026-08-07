@@ -2,7 +2,7 @@
 
 > Read this file first, every session, before touching code. It is the primary source of truth for this repository. Also read `PROJECT_STATE.md` and `TASKS.md` immediately after.
 
-Audit performed: 2026-08-06. All claims below are **Verified** against the repository at commit `7df08aa` on `main` unless explicitly marked **Inferred** or **Unknown**.
+Audit performed: 2026-08-06, most recently refreshed 2026-08-07 (fourth checkpoint, task `C-04`, a "final transfer" pass — see `PROJECT_STATE.md`). All claims below are **Verified** against the repository at commit `70f4a80` on `main` (application code unchanged since `7df08aa`; only documentation commits have landed since) unless explicitly marked **Inferred** or **Unknown**.
 
 ---
 
@@ -26,7 +26,7 @@ Audit performed: 2026-08-06. All claims below are **Verified** against the repos
 
 - **Current stable state:** Deployed, working, verified via live HTTP checks and Playwright screenshots across all 4 themes (2026-08-06 audit). No known bugs open.
 - **Latest completed milestone:** v0.4.0 — 4-theme wheel (Terminal/Paper/Matrix/Midnight), real PNG backgrounds per theme, real app icon/favicon, cross-theme color-consistency fixes (chart tooltip contrast bug and hardcoded-gold-in-non-gold-themes bug, both fixed in commit `7df08aa`).
-- **Current active task:** None (application-wise). Task `C-003` (a third account-switch documentation checkpoint) is complete as of this writing — see `TASKS.md`/`PROJECT_STATE.md`. The only open item is whether the user wants the 17 untracked documentation files committed.
+- **Current active task:** None (application-wise). Task `C-004` (a fourth account-switch/"final transfer" documentation checkpoint) is complete as of this writing — see `TASKS.md`/`PROJECT_STATE.md`. The 17-file documentation set (plus the previously-missing `README.md`, now added) is fully committed at `70f4a80` and this checkpoint's commit; no open commit decision remains.
 - **Blockers:** None known.
 - **Highest-priority next task:** None queued. See `TASKS.md` "Next up" for optional follow-ups (mainly: no automated tests exist; consider adding at least a smoke test for `lib/strategy.ts` and `lib/paper.ts` since they are pure functions and easy to unit-test).
 - **Features currently under construction:** None.
