@@ -661,3 +661,41 @@ a { color: var(--blue); }
 }
 
 .patch-entry li::marker { color: var(--muted); }
+
+/* ---- live-ticker LED look on the mid price ---- */
+
+.hero-price .price {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color: var(--blue);
+  text-shadow:
+    0 0 8px color-mix(in srgb, var(--blue) 55%, transparent),
+    0 0 20px color-mix(in srgb, var(--blue) 22%, transparent);
+}
+
+/* ---- value-arrival flash on Equity / Session PnL: the real number renders
+   instantly on every tick, this is a purely decorative background pulse
+   marking "this just changed" -- never a digit count-up, so the displayed
+   text is always true, even mid-poll. ---- */
+
+.value-flash-up, .value-flash-down {
+  border-radius: 6px;
+  margin: -2px -4px;
+  padding: 2px 4px;
+}
+
+.value-flash-up { animation: value-flash-up-kf 420ms ease-out; }
+.value-flash-down { animation: value-flash-down-kf 420ms ease-out; }
+
+@keyframes value-flash-up-kf {
+  0% { background: color-mix(in srgb, var(--long-bright) 35%, transparent); }
+  100% { background: transparent; }
+}
+
+@keyframes value-flash-down-kf {
+  0% { background: color-mix(in srgb, var(--short-bright) 32%, transparent); }
+  100% { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value-flash-up, .value-flash-down { animation-duration: .01ms !important; }
+}
