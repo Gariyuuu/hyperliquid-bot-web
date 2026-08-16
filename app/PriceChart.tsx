@@ -18,9 +18,20 @@ export default function PriceChart({ closes, fast, slow, width = 640, height = 1
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
-  const { pricePts, fastPts, slowPts, min, max, n } = useMemo(() => {
+  const { pricePts, fastPts, slowPts, fastSeries, slowSeries, min, max, n } = useMemo(() => {
     const n = closes.length;
-    if (n < 2) return { pricePts: "", fastPts: "", slowPts: "", min: 0, max: 0, n };
+    if (n < 2) {
+      return {
+        pricePts: "",
+        fastPts: "",
+        slowPts: "",
+        fastSeries: [] as number[],
+        slowSeries: [] as number[],
+        min: 0,
+        max: 0,
+        n,
+      };
+    }
     const fastSeries = emaSeries(closes, fast);
     const slowSeries = emaSeries(closes, slow);
     const all = [...closes, ...fastSeries, ...slowSeries];
@@ -37,6 +48,8 @@ export default function PriceChart({ closes, fast, slow, width = 640, height = 1
       pricePts: toPath(closes),
       fastPts: toPath(fastSeries),
       slowPts: toPath(slowSeries),
+      fastSeries,
+      slowSeries,
       min,
       max,
       n,
@@ -55,8 +68,6 @@ export default function PriceChart({ closes, fast, slow, width = 640, height = 1
     setHoverIdx(Math.min(Math.max(idx, 0), n - 1));
   }
 
-  const fastSeries = useMemo(() => emaSeries(closes, fast), [closes, fast]);
-  const slowSeries = useMemo(() => emaSeries(closes, slow), [closes, slow]);
   const hoverX = hoverIdx !== null ? PAD_X + (hoverIdx / (n - 1)) * (width - PAD_X * 2) : null;
 
   return (
