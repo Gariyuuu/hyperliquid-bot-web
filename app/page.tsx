@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useFlash } from "./useFlash";
 import Link from "next/link";
 import { initPaperState, reconcile, PaperState } from "@/lib/paper";
 import type { Signal } from "@/lib/strategy";
@@ -174,6 +175,8 @@ export default function Page() {
   const equity = paper.cash + paper.size * (mid ?? 0);
   const posUsd = paper.size * (mid ?? 0);
   const posFrac = Math.min(Math.abs(posUsd) / Math.max(config.maxPositionUsd, 1), 1);
+  const equityFlash = useFlash(equity);
+  const pnlFlash = useFlash(pnl);
 
   return (
     <div className="wrap">
@@ -226,11 +229,21 @@ export default function Page() {
           </div>
           <div className="card">
             <div className="label">Equity</div>
-            <div className="value">{fmtUsd(equity)}</div>
+            <div
+              key={fmtUsd(equity)}
+              className={`value ${equityFlash ? `value-flash-${equityFlash}` : ""}`}
+            >
+              {fmtUsd(equity)}
+            </div>
           </div>
           <div className="card">
             <div className="label">Session PnL</div>
-            <div className={`value ${pnl >= 0 ? "pos" : "neg"}`}>{fmtUsd(pnl)}</div>
+            <div
+              key={fmtUsd(pnl)}
+              className={`value ${pnl >= 0 ? "pos" : "neg"} ${pnlFlash ? `value-flash-${pnlFlash}` : ""}`}
+            >
+              {fmtUsd(pnl)}
+            </div>
           </div>
           <div className="card">
             <div className="label">Trades</div>
